@@ -6,9 +6,12 @@
 
 #import <Foundation/Foundation.h>
 
+@class PLGame;
 
-@interface PLGame : NSObject
+@interface PLGameManager : NSObject
 
-@property (nonatomic, strong, readonly) NSString * hostName;
+@property (nonatomic, strong, readonly) NSArray * waitingGames;
+
+-(PLGame*) createGame;
 
 @end

@@ -6,9 +6,9 @@
 
 #import <Foundation/Foundation.h>
 
+@class PLGamePlayView;
 
-@interface PLGame : NSObject
 
-@property (nonatomic, strong, readonly) NSString * hostName;
+@interface PLGamePlayViewController : UIViewController
 
 @end

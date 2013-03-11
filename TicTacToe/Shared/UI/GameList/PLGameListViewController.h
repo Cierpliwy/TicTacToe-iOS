@@ -9,6 +9,7 @@
 @class PLGameListView;
 @class PLGame;
 @class PLGameListViewController;
+@class PLGameManager;
 
 @protocol PLGameListViewControllerDelegate <NSObject>
 
@@ -19,5 +20,7 @@
 @interface PLGameListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, weak, readwrite) id<PLGameListViewControllerDelegate> delegate;
+
+- (id)initWithGameManager:(PLGameManager *)manager;
 
 @end
