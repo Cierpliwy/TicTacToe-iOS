@@ -23,4 +23,7 @@
 
 - (id)initWithGameManager:(PLGameManager *)manager;
 
+- (void)reconnectButtonPressed;
+- (void)connectionStatusDidChange:(BOOL)state;
+
 @end

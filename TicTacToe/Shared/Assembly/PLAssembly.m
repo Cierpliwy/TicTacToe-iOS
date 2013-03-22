@@ -16,7 +16,8 @@
 - (id)iPhoneRootViewController {
     return [TyphoonDefinition withClass:[PLIPhoneRootViewController class]
                          initialization:^(TyphoonInitializer *initializer) {
-                             initializer.selector = @selector(initWithGameListController:);
+                             initializer.selector = @selector(initWithGameManager:gameListController:);
+                             [initializer injectWithDefinition:[self gameManager]];
                              [initializer injectWithDefinition:[self gameListViewController]];
                          }];
 }

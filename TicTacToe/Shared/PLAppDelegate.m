@@ -11,8 +11,14 @@
 #import "PLAssembly.h"
 #import "PLIPhoneRootViewController.h"
 #import "PLGeneralUtils.h"
+#import "PLGameManager.h"
 
 @implementation PLAppDelegate
+
+@synthesize gameManager = gameManager;
+
+//TODO: replace with your server address
+NSString * const SERVER_ADDR = @"10.0.3.132:8887";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -20,6 +26,9 @@
     TyphoonComponentFactory* factory;
     factory = [[TyphoonBlockComponentFactory alloc] initWithAssembly:[PLAssembly assembly]];
     [factory makeDefault];
+
+    gameManager = [factory componentForType:[PLGameManager class]];
+    [gameManager connect:SERVER_ADDR];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];

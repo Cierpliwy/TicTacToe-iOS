@@ -7,8 +7,11 @@
 #import <Foundation/Foundation.h>
 
 @class PLGamePlayView;
+@class PLGameChannel;
 
 
 @interface PLGamePlayViewController : UIViewController
+
+@property (nonatomic, strong, readwrite) PLGameChannel * gameChannel;
 
 @end

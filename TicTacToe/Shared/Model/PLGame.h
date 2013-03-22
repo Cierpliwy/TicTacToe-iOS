@@ -9,6 +9,9 @@
 
 @interface PLGame : NSObject
 
-@property (nonatomic, strong, readonly) NSString * hostName;
+@property (nonatomic, strong, readonly) NSString * gameId;
+@property (nonatomic, strong, readonly) NSString * name;
+
+-(void) loadFromDict:(NSDictionary *)dict;
 
 @end

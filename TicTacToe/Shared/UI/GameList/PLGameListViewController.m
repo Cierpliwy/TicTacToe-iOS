@@ -22,7 +22,6 @@
 }
 @synthesize delegate = delegate;
 
-
 - (id)initWithGameManager:(PLGameManager *)aManager {
     self = [super init];
     if (self) {
@@ -39,6 +38,8 @@
 - (void)dealloc {
     [manager removeObserver:self
                  forKeyPath:@"waitingGames"];
+    [manager removeObserver:self
+                 forKeyPath:@"connected"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -87,8 +88,13 @@
     self.listView.tableView.dataSource = self;
 }
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return manager.waitingGames.count;
+    int count = manager.waitingGames.count;
+    return count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -101,7 +107,7 @@
 
     PLGame * game = [manager.waitingGames objectAtIndex:indexPath.row];
 
-    cell.hostNameLabel.text = game.hostName;
+    cell.hostNameLabel.text = game.name;
 
     return cell;
 }

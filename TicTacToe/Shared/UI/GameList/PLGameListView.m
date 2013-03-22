@@ -6,7 +6,6 @@
 
 #import "PLGameListView.h"
 
-
 @implementation PLGameListView {
 
 }

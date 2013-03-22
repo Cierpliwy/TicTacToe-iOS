@@ -5,13 +5,22 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SRWebSocket.h"
 
 @class PLGame;
+@class PLGameChannel;
 
-@interface PLGameManager : NSObject
+@interface PLGameManager : NSObject <SRWebSocketDelegate>
 
 @property (nonatomic, strong, readonly) NSArray * waitingGames;
+@property (nonatomic, assign, readonly) BOOL connected;
+@property (nonatomic, strong, readonly) NSString * host;
 
--(PLGame*) createGame;
+- (void)connect:(NSString*)host;
+- (void)reconnect;
 
+- (PLGame *)gameWithId:(long)gameId;
+- (PLGameChannel*)createGameChannel;
+
+- (PLGameChannel *)joinGameChannel:(PLGame *)game;
 @end

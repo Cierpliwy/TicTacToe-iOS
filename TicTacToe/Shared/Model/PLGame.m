@@ -11,4 +11,12 @@
 
 }
 
+@synthesize name = _name;
+@synthesize gameId = _gameId;
+
+- (void)loadFromDict:(NSDictionary *)dict {
+    _gameId = [dict objectForKey:@"id"];
+    _name = [dict objectForKey:@"name"];
+}
+
 @end
