@@ -9,7 +9,10 @@
 typedef enum {
     PLGameStatePending = 0,
     PLGameStateRunning = 1,
-    PLGameStateFinished = 2
+    PLGameStateWinO = 2,
+    PLGameStateWinX = 3,
+    PLGameStateDraw = 4
+
 } PLGameState;
 
 typedef enum {

@@ -63,10 +63,24 @@
     PLGameState state = _gameChannel.game.state;
     if(state == PLGameStatePending){
         self.gameplayView.stateLabel.text = @"Pending";
+        self.gameplayView.stateLabel.backgroundColor = [UIColor redColor];
+        self.gameplayView.stateLabel.textColor = [UIColor whiteColor];
     } else if(state == PLGameStateRunning){
         self.gameplayView.stateLabel.text = @"In progress";
-    } else if(state == PLGameStateFinished){
-        self.gameplayView.stateLabel.text = @"Finished";
+        self.gameplayView.stateLabel.backgroundColor = [UIColor orangeColor];
+        self.gameplayView.stateLabel.textColor = [UIColor whiteColor];
+    } else if(state == PLGameStateWinO){
+        self.gameplayView.stateLabel.text = @"O - Wins";
+        self.gameplayView.stateLabel.backgroundColor = [UIColor greenColor];
+        self.gameplayView.stateLabel.textColor = [UIColor blackColor];
+    } else if(state == PLGameStateWinX){
+        self.gameplayView.stateLabel.text = @"X - Wins";
+        self.gameplayView.stateLabel.backgroundColor = [UIColor greenColor];
+        self.gameplayView.stateLabel.textColor = [UIColor blackColor];
+    } else if(state == PLGameStateDraw){
+        self.gameplayView.stateLabel.text = @"Draw";
+        self.gameplayView.stateLabel.backgroundColor = [UIColor blackColor];
+        self.gameplayView.stateLabel.textColor = [UIColor whiteColor];
     }
 }
 
