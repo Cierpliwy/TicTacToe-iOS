@@ -4,16 +4,25 @@
 // To change the template use AppCode | Preferences | File Templates.
 //
 
+#import <CoreGraphics/CoreGraphics.h>
 #import "PLGamePlayView.h"
 #import "PLGraphicsUtils.h"
 
 
+@interface PLGamePlayView ()
+
+@property(nonatomic, strong, readwrite) NSArray *fields;
+
+@end
+
 @implementation PLGamePlayView {
 @private
-    NSArray *fields;
     UIView *bgView;
 }
-@synthesize delegate = delegate;
+
+@synthesize delegate = _delegate;
+@synthesize fields = _fields;
+@synthesize stateLabel = _stateLabel;
 
 CGFloat const kGamePlayFieldPadding = 10;
 
@@ -24,15 +33,22 @@ CGFloat const kGamePlayFieldPadding = 10;
         bgView.backgroundColor = [UIColor blackColor];
         [self addSubview:bgView];
 
-        fields = @[[self buttonForField:0],
-                [self buttonForField:1],
-                [self buttonForField:2],
-                [self buttonForField:3],
-                [self buttonForField:4],
-                [self buttonForField:5],
-                [self buttonForField:6],
-                [self buttonForField:7],
-                [self buttonForField:8]];
+        _stateLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        _stateLabel.font = [UIFont boldSystemFontOfSize:15];
+        _stateLabel.textAlignment = UITextAlignmentCenter;
+        _stateLabel.backgroundColor = [UIColor blackColor];
+        _stateLabel.textColor = [UIColor whiteColor];
+        [self addSubview:_stateLabel];
+
+        self.fields = @[[self createButtonForField:0],
+                [self createButtonForField:1],
+                [self createButtonForField:2],
+                [self createButtonForField:3],
+                [self createButtonForField:4],
+                [self createButtonForField:5],
+                [self createButtonForField:6],
+                [self createButtonForField:7],
+                [self createButtonForField:8]];
     }
 
     return self;
@@ -40,6 +56,8 @@ CGFloat const kGamePlayFieldPadding = 10;
 
 - (void)layoutSubviews {
     [super layoutSubviews];
+
+    _stateLabel.frame = CGRectMake(0, 0, self.bounds.size.width, _stateLabel.font.lineHeight * 1.6f);
 
     CGFloat dim = (fmin(self.bounds.size.width, self.bounds.size.height) - kGamePlayFieldPadding * 4) / 3;
     CGPoint fieldOrigin = CGPointMake(
@@ -54,7 +72,7 @@ CGFloat const kGamePlayFieldPadding = 10;
     for (int i = 0; i <= 8; ++i) {
         int const ix = i % 3;
         int const iy = i / 3;
-        ((UIView *) [fields objectAtIndex:i]).frame = CGRectMake(fieldOrigin.x + (kGamePlayFieldPadding + dim) * ix,
+        ((UIView *) [self.fields objectAtIndex:i]).frame = CGRectMake(fieldOrigin.x + (kGamePlayFieldPadding + dim) * ix,
                 fieldOrigin.y + (kGamePlayFieldPadding + dim) * iy,
                 dim,
                 dim);
@@ -62,7 +80,7 @@ CGFloat const kGamePlayFieldPadding = 10;
 }
 
 
-- (UIButton *)buttonForField:(NSUInteger)inx {
+- (UIButton *)createButtonForField:(NSUInteger)inx {
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.tag = inx;
     [button addTarget:self
@@ -70,6 +88,8 @@ CGFloat const kGamePlayFieldPadding = 10;
      forControlEvents:UIControlEventTouchUpInside];
     [button setBackgroundImage:UIImageFromColor([UIColor whiteColor]) forState:UIControlStateNormal];
     [button setBackgroundImage:UIImageFromColor([UIColor redColor]) forState:UIControlStateHighlighted];
+    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    button.titleLabel.font = [UIFont boldSystemFontOfSize:40];
     [self addSubview:button];
     return button;
 }

@@ -6,7 +6,6 @@
 
 #import "PLGameManager.h"
 #import "PLGame.h"
-#import "PLGameChannel.h"
 
 @interface PLGameManager ()
 
@@ -15,7 +14,7 @@
 @end
 
 @implementation PLGameManager {
-    NSMutableArray * _waitingGames;
+    NSMutableArray *_waitingGames;
     SRWebSocket *_ws;
     BOOL _justConnected;
 }
@@ -36,7 +35,7 @@
 }
 
 - (void)dealloc {
-    if(_ws != nil){
+    if (_ws != nil) {
         [_ws closeWithCode:1001 reason:nil];
     }
 }
@@ -87,7 +86,7 @@
     [_waitingGames removeObjectsAtIndexes:set];
 }
 
-- (PLGame *)gameWithId:(NSString*)gameId {
+- (PLGame *)gameWithId:(NSString *)gameId {
     @synchronized (_waitingGames) {
         for (int i = 0; i < _waitingGames.count; ++i) {
             PLGame *game = [_waitingGames objectAtIndex:i];
@@ -99,13 +98,13 @@
     }
 }
 
-- (PLGameChannel*)createGameChannel{
-    PLGameChannel * channel = [[PLGameChannel alloc] initWithGameManager:self];
+- (PLGameChannel *)createGameChannel {
+    PLGameChannel *channel = [[PLGameChannel alloc] initWithGameManager:self];
     return channel;
 }
 
-- (PLGameChannel *)joinGameChannel:(PLGame *)game{
-    PLGameChannel * channel = [[PLGameChannel alloc] initWithGameManager:self game:game];
+- (PLGameChannel *)joinGameChannel:(PLGame *)game {
+    PLGameChannel *channel = [[PLGameChannel alloc] initWithGameManager:self game:game];
     return channel;
 }
 
@@ -113,6 +112,28 @@
 #pragma mark -
 #pragma mark websocket delegate
 //***************************************************************
+
+- (id)decodeJSONMessage:(id)message {
+    NSData *msgData = nil;
+    if ([message isKindOfClass:[NSString class]]) {
+        msgData = [message dataUsingEncoding:NSUTF8StringEncoding];
+    } else if ([message isKindOfClass:[NSData class]]) {
+        msgData = message;
+    } else {
+        @throw [NSException exceptionWithName:@"IllegalStateException"
+                                       reason:@"message suppoused to be a string or data containing json"
+                                     userInfo:nil];
+    }
+
+    NSError *error = nil;
+    id decodedMsg = [NSJSONSerialization JSONObjectWithData:msgData options:0 error:&error];
+    if (error != nil) {
+        @throw [NSException exceptionWithName:@"IllegalStateException"
+                                       reason:@"failed to read message"
+                                     userInfo:nil];
+    }
+    return decodedMsg;
+}
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
     NSLog(@"%s", sel_getName(_cmd));
@@ -140,22 +161,8 @@
         _justConnected = NO;
     }
 
-    NSData *msgData = nil;
-    if ([message isKindOfClass:[NSString class]]) {
-        msgData = [message dataUsingEncoding:NSUTF8StringEncoding];
-    } else if ([message isKindOfClass:[NSData class]]) {
-        msgData = message;
-    } else {
-        NSLog(@"message suppoused to be a string or data containing json");
-        return;
-    }
+    id decodedMsg = [self decodeJSONMessage:message];
 
-    NSError *error = nil;
-    id decodedMsg = [NSJSONSerialization JSONObjectWithData:msgData options:0 error:&error];
-    if (error != nil) {
-        NSLog(@"failed to read message");
-        return;
-    }
     NSArray *newArray = [decodedMsg objectForKey:@"new"];
     for (NSDictionary *obj in newArray) {
         PLGame *game = [PLGame new];
@@ -170,7 +177,7 @@
     }
     NSArray *removedArray = [decodedMsg objectForKey:@"removed"];
     for (NSDictionary *obj in removedArray) {
-        NSString * gameId = [obj objectForKey:@"id"];
+        NSString *gameId = [obj objectForKey:@"id"];
 
         @synchronized (_waitingGames) {
             for (int i = 0; i < _waitingGames.count;) {

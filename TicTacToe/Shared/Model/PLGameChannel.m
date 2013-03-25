@@ -86,6 +86,20 @@
     }
 }
 
+- (BOOL)move:(int)field{
+    if(_ws == nil){
+        return false;
+    }
+
+    id msg = @{@"move" : @(field)};
+    id msgData = [NSJSONSerialization dataWithJSONObject:msg
+                                                 options:0
+                                                   error:NULL];
+    [_ws send:[[NSString alloc] initWithData:msgData
+                                    encoding:NSUTF8StringEncoding]];
+    return true;
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if([keyPath isEqualToString:@"waitingGames"]){
         NSLog(@"waitingGames: %@", change);
@@ -98,6 +112,28 @@
 #pragma mark -
 #pragma mark websocket delegate
 //***************************************************************
+
+- (id)decodeJSONMessage:(id)message {
+    NSData *msgData = nil;
+    if ([message isKindOfClass:[NSString class]]) {
+        msgData = [message dataUsingEncoding:NSUTF8StringEncoding];
+    } else if ([message isKindOfClass:[NSData class]]) {
+        msgData = message;
+    } else {
+        @throw [NSException exceptionWithName:@"IllegalStateException"
+                                       reason:@"message suppoused to be a string or data containing json"
+                                     userInfo:nil];
+    }
+
+    NSError *error = nil;
+    id decodedMsg = [NSJSONSerialization JSONObjectWithData:msgData options:0 error:&error];
+    if (error != nil) {
+        @throw [NSException exceptionWithName:@"IllegalStateException"
+                                       reason:@"failed to read message"
+                                     userInfo:nil];
+    }
+    return decodedMsg;
+}
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
     NSLog(@"%s", sel_getName(_cmd));
@@ -120,7 +156,17 @@
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
     NSLog(@"%s: %@", sel_getName(_cmd), message);
 
+    id decodedMsg = [self decodeJSONMessage:message];
 
+    [self willChangeValueForKey:@"game"];
+    if(_game == nil){
+        PLGame * newGame = [[PLGame alloc] init];
+        [newGame loadFromDict:decodedMsg];
+        _game = newGame;
+    } else {
+        [_game loadFromDict:decodedMsg];
+    }
+    [self didChangeValueForKey:@"game"];
 }
 
 @end

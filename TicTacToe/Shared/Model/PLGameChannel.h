@@ -21,4 +21,6 @@
 - (void)create;
 - (void)join;
 
+- (BOOL)move:(int)field;
+
 @end

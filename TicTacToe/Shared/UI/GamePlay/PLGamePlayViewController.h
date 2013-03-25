@@ -5,12 +5,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PLGamePlayView.h"
 
 @class PLGamePlayView;
 @class PLGameChannel;
 
 
-@interface PLGamePlayViewController : UIViewController
+@interface PLGamePlayViewController : UIViewController <PLGamePlayViewDelegate>
 
 @property (nonatomic, strong, readwrite) PLGameChannel * gameChannel;
 

@@ -10,14 +10,15 @@
 
 @protocol PLGamePlayViewDelegate <NSObject>
 
--(void) gameplayView:(PLGamePlayView*)gameplayView didTapField:(NSUInteger)field;
+- (void)gameplayView:(PLGamePlayView *)gameplayView didTapField:(NSUInteger)field;
 
 @end
 
 @interface PLGamePlayView : UIView
 
-@property (nonatomic, weak, readwrite) id<PLGamePlayViewDelegate> delegate;
+@property(nonatomic, weak, readwrite) id <PLGamePlayViewDelegate> delegate;
 
-
+@property(nonatomic, strong, readonly) UILabel *stateLabel;
+@property(nonatomic, strong, readonly) NSArray *fields;
 
 @end
