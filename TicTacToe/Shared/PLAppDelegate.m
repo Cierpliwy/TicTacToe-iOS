@@ -1,9 +1,5 @@
 //
-//  PLAppDelegate.m
-//  TicTacToe
-//
-//  Created by Antoni Kedracki on 03/08/13.
-//  Copyright (c) 2013 __MyCompanyName__. All rights reserved.
+// Created by Antoni Kędracki, Polidea
 //
 
 #import "PLAppDelegate.h"

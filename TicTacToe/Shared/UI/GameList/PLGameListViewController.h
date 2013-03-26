@@ -1,7 +1,5 @@
 //
-// Created by antoni on 3/8/13.
-//
-// To change the template use AppCode | Preferences | File Templates.
+// Created by Antoni Kędracki, Polidea
 //
 
 #import <Foundation/Foundation.h>
