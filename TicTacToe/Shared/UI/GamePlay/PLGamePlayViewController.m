@@ -40,10 +40,10 @@
     [super viewDidLoad];
 
     self.gameplayView.delegate = self;
-    [self setupViewFromGameState];
+    [self setupViewFromGameStateAnimated:NO];
 }
 
-- (void)setupViewFromGameState {
+- (void)setupViewFromGameStateAnimated:(BOOL)animated {
     if(!self.isViewLoaded){
         return;
     }
@@ -60,25 +60,15 @@
     }
     PLGameState state = _gameChannel.game.state;
     if(state == PLGameStatePending){
-        self.gameplayView.stateLabel.text = @"Pending";
-        self.gameplayView.stateLabel.backgroundColor = [UIColor redColor];
-        self.gameplayView.stateLabel.textColor = [UIColor whiteColor];
+        [self.gameplayView setStateText:@"Pending" textColor:[UIColor whiteColor] backgroungColor:[UIColor redColor] animated:animated];
     } else if(state == PLGameStateRunning){
-        self.gameplayView.stateLabel.text = @"In progress";
-        self.gameplayView.stateLabel.backgroundColor = [UIColor orangeColor];
-        self.gameplayView.stateLabel.textColor = [UIColor whiteColor];
+        [self.gameplayView setStateText:@"In progress" textColor:[UIColor whiteColor] backgroungColor:[UIColor orangeColor] animated:animated];
     } else if(state == PLGameStateWinO){
-        self.gameplayView.stateLabel.text = @"O - Wins";
-        self.gameplayView.stateLabel.backgroundColor = [UIColor greenColor];
-        self.gameplayView.stateLabel.textColor = [UIColor blackColor];
+        [self.gameplayView setStateText:@"O - Wins" textColor:[UIColor blackColor] backgroungColor:[UIColor greenColor] animated:animated];
     } else if(state == PLGameStateWinX){
-        self.gameplayView.stateLabel.text = @"X - Wins";
-        self.gameplayView.stateLabel.backgroundColor = [UIColor greenColor];
-        self.gameplayView.stateLabel.textColor = [UIColor blackColor];
+        [self.gameplayView setStateText:@"X - Wins" textColor:[UIColor blackColor] backgroungColor:[UIColor greenColor] animated:animated];
     } else if(state == PLGameStateDraw){
-        self.gameplayView.stateLabel.text = @"Draw";
-        self.gameplayView.stateLabel.backgroundColor = [UIColor blackColor];
-        self.gameplayView.stateLabel.textColor = [UIColor whiteColor];
+        [self.gameplayView setStateText:@"Draw" textColor:[UIColor whiteColor] backgroungColor:[UIColor blackColor] animated:animated];
     }
 }
 
@@ -100,7 +90,7 @@
                               context:nil];
         }
 
-        [self setupViewFromGameState];
+        [self setupViewFromGameStateAnimated:NO];
         [self didChangeValueForKey:@"gameChannel"];
     }
 }
@@ -112,7 +102,7 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([@"game" isEqualToString:keyPath]) {
         NSLog(@"change = %@", change);
-        [self setupViewFromGameState];
+        [self setupViewFromGameStateAnimated:YES];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }

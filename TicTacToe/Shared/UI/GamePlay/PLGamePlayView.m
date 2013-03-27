@@ -2,7 +2,6 @@
 // Created by Antoni Kędracki, Polidea
 //
 
-#import <CoreGraphics/CoreGraphics.h>
 #import "PLGamePlayView.h"
 #import "PLGraphicsUtils.h"
 
@@ -94,6 +93,43 @@ CGFloat const kGamePlayFieldPadding = 10;
 
 - (void)fieldWasPressed:(UIButton *)button {
     [self.delegate gameplayView:self didTapField:button.tag];
+}
+
+- (void)setStateText:(NSString *)text textColor:(UIColor *)textColor backgroungColor:(UIColor *)bgColor animated:(BOOL)animated {
+    if([_stateLabel.textColor isEqual:textColor] && [_stateLabel.text isEqualToString:text] && [_stateLabel.backgroundColor isEqual:bgColor]){
+        return;
+    }
+
+    void (^setupBlock)() = ^{
+        _stateLabel.text = text;
+        _stateLabel.textColor = textColor;
+        _stateLabel.backgroundColor = bgColor;
+    };
+
+    if (!animated) {
+        setupBlock();
+    } else {
+        CGFloat const animDuration = 0.2f;
+        [UIView animateWithDuration:animDuration
+                              delay:0
+                            options:UIViewAnimationOptionBeginFromCurrentState
+                         animations:^{
+                             _stateLabel.alpha = 0;
+                         }
+                         completion:^(BOOL finished) {
+                             if (!finished) {
+                                 return;
+                             }
+                             setupBlock();
+                             [UIView animateWithDuration:animDuration
+                                                   delay:0
+                                                 options:UIViewAnimationOptionBeginFromCurrentState
+                                              animations:^{
+                                                  _stateLabel.alpha = 1;
+                                              }
+                                              completion:nil];
+                         }];
+    }
 }
 
 @end

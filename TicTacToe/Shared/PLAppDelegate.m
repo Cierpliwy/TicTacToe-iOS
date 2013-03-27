@@ -14,7 +14,7 @@
 @synthesize gameManager = gameManager;
 
 //TODO: replace with your server address
-NSString * const SERVER_ADDR = @"10.0.3.132:8887";
+NSString * const SERVER_ADDR = @"10.0.3.154:8887";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
