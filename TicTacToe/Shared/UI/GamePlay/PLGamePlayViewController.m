@@ -101,8 +101,10 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([@"game" isEqualToString:keyPath]) {
-        NSLog(@"change = %@", change);
-        [self setupViewFromGameStateAnimated:YES];
+        NSLog(@"game = %@", _gameChannel.game);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setupViewFromGameStateAnimated:YES];
+        });
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }

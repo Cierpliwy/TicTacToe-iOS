@@ -26,6 +26,8 @@ CGFloat const kGamePlayFieldPadding = 10;
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
+        self.backgroundColor = [UIColor whiteColor];
+
         bgView = [[UIView alloc] initWithFrame:CGRectZero];
         bgView.backgroundColor = [UIColor blackColor];
         [self addSubview:bgView];

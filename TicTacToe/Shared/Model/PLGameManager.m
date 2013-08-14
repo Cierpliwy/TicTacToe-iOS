@@ -2,56 +2,55 @@
 // Created by Antoni Kędracki, Polidea
 //
 
+#import <MultipeerConnectivity/MultipeerConnectivity.h>
 #import "PLGameManager.h"
 #import "PLGame.h"
 
-@interface PLGameManager ()
-
-@property(nonatomic, assign, readwrite) BOOL connected;
-
+@interface PLGameManager () <MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate>
 @end
 
 @implementation PLGameManager {
     NSMutableArray *_waitingGames;
-    SRWebSocket *_ws;
-    BOOL _justConnected;
+
+    NSMutableDictionary * _peerRepository;
+
+    MCNearbyServiceBrowser *_browser;
+
+    MCNearbyServiceAdvertiser *_advertiser;
+    PLGameChannel *_hostedGame;
 }
 
-@synthesize waitingGames = _waitingGames;
-@synthesize connected = _connected;
-@synthesize host = _host;
+@synthesize peerId = _peerId;
+
++ (NSString *)serviceType {
+    return @"polidea-tictac";
+}
 
 - (id)init {
     self = [super init];
     if (self) {
         _waitingGames = [NSMutableArray new];
-        _connected = NO;
-        _host = nil;
+
+        _peerRepository = [NSMutableDictionary new];
+
+        _peerId = [[MCPeerID alloc] initWithDisplayName:[UIDevice currentDevice].name];
+        [_peerRepository setObject:_peerId forKey:_peerId.displayName];
+
+        _browser = [[MCNearbyServiceBrowser alloc] initWithPeer:_peerId serviceType:[[self class] serviceType]];
+        _browser.delegate = self;
+        [_browser startBrowsingForPeers];
+
+        _hostedGame = nil;
     }
 
     return self;
 }
 
 - (void)dealloc {
-    if (_ws != nil) {
-        [_ws closeWithCode:1001 reason:nil];
+    [_browser stopBrowsingForPeers];
+    if(_advertiser){
+        [_advertiser stopAdvertisingPeer];
     }
-}
-
-- (void)connect:(NSString *)host {
-    if (_ws == nil) {
-        _justConnected = YES;
-        _host = host;
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"ws://%@/game/list/", host]];
-        NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:url];
-        _ws = [[SRWebSocket alloc] initWithURLRequest:urlRequest];
-        _ws.delegate = self;
-        [_ws open];
-    }
-}
-
-- (void)reconnect {
-    [self connect:_host];
 }
 
 //***************************************************************
@@ -79,115 +78,117 @@
     [_waitingGames removeObjectAtIndex:index];
 }
 
-
 - (void)removeWaitingGamesAtIndexes:(NSIndexSet *)set {
     [_waitingGames removeObjectsAtIndexes:set];
 }
 
-- (PLGame *)gameWithId:(NSString *)gameId {
-    @synchronized (_waitingGames) {
-        for (int i = 0; i < _waitingGames.count; ++i) {
-            PLGame *game = [_waitingGames objectAtIndex:i];
-            if ([game.gameId isEqualToString:gameId]) {
-                return game;
-            }
-        }
-        return nil;
+//***************************************************************
+#pragma mark -
+#pragma mark game management
+//***************************************************************
+
+- (MCPeerID *)peerForUserId:(NSString *)userId {
+    return [_peerRepository objectForKey:userId];
+}
+
+- (PLGameChannel *)hostGame {
+    if (_hostedGame == nil) {
+        PLGame *game = [[PLGame alloc] initWithOwnerId:self.peerId.displayName];
+        _hostedGame = [[PLGameChannel alloc] initWithGameManager:self
+                                                            game:game];
+
+        _advertiser = [[MCNearbyServiceAdvertiser alloc] initWithPeer:self.peerId
+                                                        discoveryInfo:nil
+                                                          serviceType:[[self class] serviceType]];
+        _advertiser.delegate = self;
+        [_advertiser startAdvertisingPeer];
     }
+
+    return _hostedGame;
 }
 
-- (PLGameChannel *)createGameChannel {
-    PLGameChannel *channel = [[PLGameChannel alloc] initWithGameManager:self];
-    return channel;
+- (void)teardownHostedGame {
+    if (_hostedGame == nil) {
+        return;
+    }
+
+    [_advertiser stopAdvertisingPeer];
+    _advertiser = nil;
+    [_hostedGame.session disconnect];
+
+    _hostedGame = nil;
 }
 
-- (PLGameChannel *)joinGameChannel:(PLGame *)game {
-    PLGameChannel *channel = [[PLGameChannel alloc] initWithGameManager:self game:game];
-    return channel;
+- (PLGameChannel *)joinGame:(PLGame *)game {
+    if([game.ownerId isEqualToString:self.peerId.displayName]){
+        @throw [NSException exceptionWithName:@"InvalidStateException" reason:@"can't join a self-hosted game" userInfo:nil];
+    }
+
+    PLGameChannel * gameChannel = [[PLGameChannel alloc] initWithGameManager:self
+                                                                        game:game];
+
+    [_browser invitePeer:[self peerForUserId:game.ownerId]
+               toSession:gameChannel.session
+             withContext:nil
+                 timeout:10];
+
+    return gameChannel;
 }
 
 //***************************************************************
 #pragma mark -
-#pragma mark websocket delegate
+#pragma mark multi-peer delegate
 //***************************************************************
 
-- (id)decodeJSONMessage:(id)message {
-    NSData *msgData = nil;
-    if ([message isKindOfClass:[NSString class]]) {
-        msgData = [message dataUsingEncoding:NSUTF8StringEncoding];
-    } else if ([message isKindOfClass:[NSData class]]) {
-        msgData = message;
+- (void)browser:(MCNearbyServiceBrowser *)browser foundPeer:(MCPeerID *)peerID withDiscoveryInfo:(NSDictionary *)info {
+    NSLog(@"%s -> peer: %@ infoDict: %@", sel_getName(_cmd), peerID, info);
+
+    [_peerRepository setObject:peerID forKey:peerID.displayName];
+
+    for (NSUInteger i = 0; i < [self countOfWaitingGames]; ++i) {
+        PLGame *tmp = [self objectInWaitingGamesAtIndex:i];
+        if ([tmp.ownerId isEqualToString:peerID.displayName]) {
+            [self removeObjectFromWaitingGamesAtIndex:i];
+            break;
+        }
+    }
+
+    PLGame *game = [[PLGame alloc] initWithOwnerId:peerID.displayName];
+    [self insertObject:game inWaitingGamesAtIndex:[self countOfWaitingGames]];
+}
+
+- (void)browser:(MCNearbyServiceBrowser *)browser lostPeer:(MCPeerID *)peerID {
+    NSLog(@"%s -> peer: %@", sel_getName(_cmd), peerID);
+
+    for (NSUInteger i = 0; i < [self countOfWaitingGames]; ++i) {
+        PLGame *tmp = [self objectInWaitingGamesAtIndex:i];
+        if ([tmp.ownerId isEqualToString:peerID.displayName]) {
+            [self removeObjectFromWaitingGamesAtIndex:i];
+            break;
+        }
+    }
+}
+
+- (void)browser:(MCNearbyServiceBrowser *)browser didNotStartBrowsingForPeers:(NSError *)error {
+    NSLog(@"%s", sel_getName(_cmd));
+
+    NSLog(@"Failed to start listining for remote peers: %@", error);
+}
+
+- (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didReceiveInvitationFromPeer:(MCPeerID *)peerID withContext:(NSData *)context invitationHandler:(void (^)(BOOL accept, MCSession *session))invitationHandler {
+    NSLog(@"%s -> peer: %@", sel_getName(_cmd), peerID);
+
+    if(_hostedGame == nil){
+        invitationHandler(NO, nil);
     } else {
-        @throw [NSException exceptionWithName:@"IllegalStateException"
-                                       reason:@"message suppoused to be a string or data containing json"
-                                     userInfo:nil];
+        invitationHandler(YES, _hostedGame.session);
     }
-
-    NSError *error = nil;
-    id decodedMsg = [NSJSONSerialization JSONObjectWithData:msgData options:0 error:&error];
-    if (error != nil) {
-        @throw [NSException exceptionWithName:@"IllegalStateException"
-                                       reason:@"failed to read message"
-                                     userInfo:nil];
-    }
-    return decodedMsg;
 }
 
-- (void)webSocketDidOpen:(SRWebSocket *)webSocket {
+- (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didNotStartAdvertisingPeer:(NSError *)error {
     NSLog(@"%s", sel_getName(_cmd));
-    self.connected = YES;
-}
 
-- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
-    NSLog(@"%s", sel_getName(_cmd));
-    self.connected = NO;
-    [_ws close];
-    _ws = nil;
-}
-
-- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
-    NSLog(@"%s", sel_getName(_cmd));
-    self.connected = NO;
-    _ws = nil;
-}
-
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
-    NSLog(@"%s: %@", sel_getName(_cmd), message);
-
-    if (_justConnected) {
-        [self removeWaitingGamesAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _waitingGames.count)]];
-        _justConnected = NO;
-    }
-
-    id decodedMsg = [self decodeJSONMessage:message];
-
-    NSArray *newArray = [decodedMsg objectForKey:@"new"];
-    for (NSDictionary *obj in newArray) {
-        PLGame *game = [PLGame new];
-        [game loadFromDict:obj];
-        @synchronized (_waitingGames) {
-            [self insertObject:game inWaitingGamesAtIndex:[self countOfWaitingGames]];
-        }
-    }
-    NSArray *updateArray = [decodedMsg objectForKey:@"update"];
-    for (NSDictionary *obj in updateArray) {
-
-    }
-    NSArray *removedArray = [decodedMsg objectForKey:@"removed"];
-    for (NSDictionary *obj in removedArray) {
-        NSString *gameId = [obj objectForKey:@"id"];
-
-        @synchronized (_waitingGames) {
-            for (int i = 0; i < _waitingGames.count;) {
-                PLGame *game = [_waitingGames objectAtIndex:i];
-                if ([game.gameId isEqualToString:gameId]) {
-                    [self removeObjectFromWaitingGamesAtIndex:i];
-                } else {
-                    ++i;
-                }
-            }
-        }
-    }
+    NSLog(@"Failed to start advertising: %@", error);
 }
 
 @end

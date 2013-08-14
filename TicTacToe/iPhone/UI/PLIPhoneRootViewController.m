@@ -9,6 +9,9 @@
 #import "PLGameChannel.h"
 
 
+@interface PLIPhoneRootViewController () <UINavigationControllerDelegate>
+@end
+
 @implementation PLIPhoneRootViewController {
 }
 @synthesize gameList = gameList;
@@ -18,15 +21,12 @@
 - (id)initWithGameManager:(PLGameManager *)aManager gameListController:(PLGameListViewController *)aGameList {
     self = [super init];
     if (self) {
+        self.delegate = self;
+
         manager = aManager;
-        [manager addObserver:self
-                  forKeyPath:@"connected"
-                     options:NSKeyValueObservingOptionNew
-                     context:nil];
 
         gameList = aGameList;
         gameList.delegate = self;
-
 
         [self setupGameListNavigationItems];
 
@@ -36,16 +36,7 @@
 }
 
 - (void)dealloc {
-    [manager removeObserver:self
-                 forKeyPath:@"connected"];
-}
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if([@"connected" isEqualToString:keyPath]){
-        gameList.navigationItem.leftBarButtonItem.enabled = !manager.connected;
-    } else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
 }
 
 - (void)setupGameListNavigationItems {
@@ -55,36 +46,53 @@
                                                                           target:self
                                                                           action:@selector(addGameButtonPressed:)];
     gameList.navigationItem.rightBarButtonItem = rightBarButtonItem;
-    UIBarButtonItem *leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Reconnect"
-                                                                          style:UIBarButtonItemStyleBordered
-                                                                         target:self
-                                                                         action:@selector(reconnectButtonPressed:)];
-    gameList.navigationItem.leftBarButtonItem = leftBarButtonItem;
-}
-
-- (void)reconnectButtonPressed:(UIBarButtonItem *)button {
-    [manager reconnect];
 }
 
 - (void)addGameButtonPressed:(id)addGameButtonPressed {
     PLGamePlayViewController *playViewController = [[PLGamePlayViewController alloc] init];
-    playViewController.gameChannel = [manager createGameChannel];
-    [playViewController.gameChannel create];
+    playViewController.gameChannel = [manager hostGame];
+
+    playViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Leave"
+                                                                                           style:UIBarButtonItemStyleBordered
+                                                                                          target:self
+                                                                                          action:@selector(leaveHostedGameButtonPressed:)];
+
     [self pushViewController:playViewController
                     animated:YES];
 }
 
+- (void)leaveHostedGameButtonPressed:(id)leaveHostedGameButtonPressed {
+    if(![self.topViewController isKindOfClass:[PLGamePlayViewController class]]){
+        return;
+    }
+
+    [manager teardownHostedGame];
+    [self popViewControllerAnimated:YES];
+}
+
 - (void)gameListController:(PLGameListViewController *)listController didSelectGame:(PLGame *)game {
     PLGamePlayViewController *playViewController = [[PLGamePlayViewController alloc] init];
-    playViewController.gameChannel = [manager joinGameChannel:game];
-    [playViewController.gameChannel join];
+    playViewController.gameChannel = [manager joinGame:game];
+
+    playViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Leave"
+                                                                                           style:UIBarButtonItemStyleBordered
+                                                                                          target:self
+                                                                                          action:@selector(leaveJoinedGameButtonPressed:)];
+
     [self pushViewController:playViewController
                     animated:YES];
+}
+
+- (void)leaveJoinedGameButtonPressed:(id)leaveJoinedGameButtonPressed {
+    if(![self.topViewController isKindOfClass:[PLGamePlayViewController class]]){
+        return;
+    }
+
+    [self popViewControllerAnimated:YES];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
     return UIInterfaceOrientationIsPortrait(toInterfaceOrientation);
 }
-
 
 @end

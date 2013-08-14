@@ -105,7 +105,7 @@
 
     PLGame * game = [manager.waitingGames objectAtIndex:indexPath.row];
 
-    cell.hostNameLabel.text = game.name;
+    cell.hostNameLabel.text = game.ownerId;
 
     return cell;
 }

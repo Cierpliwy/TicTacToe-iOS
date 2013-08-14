@@ -24,7 +24,6 @@ NSString * const SERVER_ADDR = @"10.0.3.154:8887";
     [factory makeDefault];
 
     gameManager = [factory componentForType:[PLGameManager class]];
-    [gameManager connect:SERVER_ADDR];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];

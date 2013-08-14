@@ -4,6 +4,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class MCPeerID;
+
 typedef enum {
     PLGameStatePending = 0,
     PLGameStateRunning = 1,
@@ -21,14 +23,22 @@ typedef enum {
 
 @interface PLGame : NSObject
 
-@property(nonatomic, strong, readonly) NSString *gameId;
-@property(nonatomic, strong, readonly) NSString *name;
+-(id)initWithOwnerId:(NSString *)ownerId;
+
+@property (nonatomic, strong, readonly) NSString * ownerId;
+@property (nonatomic, strong, readonly) NSString * challengerId;
+
 @property(nonatomic, assign, readonly) PLGameState state;
 
-- (PLGameFieldState)fieldState:(int)field;
+@property (nonatomic, assign, readonly) PLGameFieldState nextPlayer;
+-(void)performMove:(NSUInteger)field;
+
+-(void)startWithChallengerId:(NSString *)challengerId;
+
+- (PLGameFieldState)fieldState:(NSUInteger)field;
++ (int)numberOfFields;
 
 - (void)loadFromDict:(NSDictionary *)dict;
-
-+ (int)numberOfFields;
+- (NSDictionary*)storeToDict;
 
 @end

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2AC405D917BA7DEE0084BE9B /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AC405D817BA7DEE0084BE9B /* MultipeerConnectivity.framework */; };
 		ABCA9033D65456046B1D9352 /* TyphoonComponentFactory+InstanceBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA9B8FF522BB1B3DACFC91 /* TyphoonComponentFactory+InstanceBuilder.m */; };
 		ABCA903E7F0B3780A67E29CF /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ABCA9CDB4ACA58431F12F17C /* libicucore.dylib */; };
 		ABCA908E67E096D9049AACF6 /* PLGameListView.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA909CA89C178C372BF1C1 /* PLGameListView.m */; };
@@ -19,7 +20,6 @@
 		ABCA9307D1B9B49472ADBFCF /* TyphoonDefinition+InstanceBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA9F99AF2ECF3084B36416 /* TyphoonDefinition+InstanceBuilder.m */; };
 		ABCA93387995CC699BA5401E /* TyphoonBlockComponentFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA9593348D6E977FBA3CCF /* TyphoonBlockComponentFactory.m */; };
 		ABCA938D10AE8DF23F6451B6 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ABCA91052090051D3430F26A /* Default-568h@2x.png */; };
-		ABCA93A928A6C3B4D661A8D2 /* NSData+SRB64Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA91685216E4FC8501CE58 /* NSData+SRB64Additions.m */; };
 		ABCA93AC7764E93A181911DC /* TyphoonBundleResource.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA96412B506E551AB59D16 /* TyphoonBundleResource.m */; };
 		ABCA93F5E977360477C31CB9 /* PLGameListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA9A99FC19D23DFA113DE2 /* PLGameListViewController.m */; };
 		ABCA94026FC03A58CE914F4C /* TyphoonParameterInjectedByValue.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA908BCE868E5CD058E958 /* TyphoonParameterInjectedByValue.m */; };
@@ -34,7 +34,6 @@
 		ABCA9682D1877B23B570D605 /* PLAssembly.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA94C0CED7F5F912642450 /* PLAssembly.m */; };
 		ABCA96C82B45F83C6F01E8DB /* TyphoonRXMLElement+XmlComponentFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA9A1BB2D46626D407A351 /* TyphoonRXMLElement+XmlComponentFactory.m */; };
 		ABCA96DC36C5339BDAB84115 /* TyphoonAssembly.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA9B4E11123ADD6D9D0C26 /* TyphoonAssembly.m */; };
-		ABCA976361A8DF9104D630B8 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA968025C239E918DD3F38 /* SRWebSocket.m */; };
 		ABCA977982F045A96FC925F8 /* TyphoonPropertyInjectedByValue.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA93AEDE1C66E403F8F228 /* TyphoonPropertyInjectedByValue.m */; };
 		ABCA977F69352AD2C2FB9EB6 /* TyphoonPropertyInjectedByReference.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA96291492658F60354EC5 /* TyphoonPropertyInjectedByReference.m */; };
 		ABCA97CAB31BBC9465E82656 /* PLGameManager.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA927F46E882BF6609A731 /* PLGameManager.m */; };
@@ -55,7 +54,6 @@
 		ABCA9CE07A0EBD149A0FD978 /* TyphoonInitializer+InstanceBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA9B1763174A3EA7A19AD3 /* TyphoonInitializer+InstanceBuilder.m */; };
 		ABCA9D14150493D82021E9AD /* TyphoonDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA9702FC23475AB8907D72 /* TyphoonDefinition.m */; };
 		ABCA9D75E77E13E5404C2FD5 /* TyphoonTypeConverterRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA98159F8D291308191688 /* TyphoonTypeConverterRegistry.m */; };
-		ABCA9D9FC0290EB3D56F5145 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = ABCA969DBEA4B8383181C498 /* base64.c */; };
 		ABCA9DB6E94604C464DB44C0 /* TyphoonComponentFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA9D5D15B6BFFD648B4DD5 /* TyphoonComponentFactory.m */; };
 		ABCA9E0827EBDCF40EA316E0 /* TyphoonRXMLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA9D1A264CAE591EC283D7 /* TyphoonRXMLElement.m */; };
 		ABCA9EA63123702AF9D888C0 /* TyphoonPrimitiveTypeConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = ABCA928CF466D9531C2BDC5A /* TyphoonPrimitiveTypeConverter.m */; };
@@ -65,6 +63,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2AC405D817BA7DEE0084BE9B /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
 		ABCA90120522DA3940059798 /* TyphoonXmlComponentFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TyphoonXmlComponentFactory.m; sourceTree = "<group>"; };
 		ABCA9053A6FBC337ACF89424 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		ABCA906BB3516B936C958B80 /* TyphoonAssembly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TyphoonAssembly.h; sourceTree = "<group>"; };
@@ -77,8 +76,6 @@
 		ABCA91052090051D3430F26A /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		ABCA913253F06D0C9EDEBAB1 /* TyphoonInjectedParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TyphoonInjectedParameter.h; sourceTree = "<group>"; };
 		ABCA913FC874160217E25F71 /* Typhoon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Typhoon.h; sourceTree = "<group>"; };
-		ABCA91427D0B6B1010B19BC9 /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
-		ABCA91685216E4FC8501CE58 /* NSData+SRB64Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+SRB64Additions.m"; sourceTree = "<group>"; };
 		ABCA91BF01896EF6D52159E9 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		ABCA91C274C0468392854BD6 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		ABCA9218EC25EC62ADB36207 /* TyphoonShorthand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TyphoonShorthand.h; sourceTree = "<group>"; };
@@ -113,9 +110,6 @@
 		ABCA96291492658F60354EC5 /* TyphoonPropertyInjectedByReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TyphoonPropertyInjectedByReference.m; sourceTree = "<group>"; };
 		ABCA96412B506E551AB59D16 /* TyphoonBundleResource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TyphoonBundleResource.m; sourceTree = "<group>"; };
 		ABCA966AB6ED48647FE57A52 /* TyphoonTypeDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TyphoonTypeDescriptor.h; sourceTree = "<group>"; };
-		ABCA968025C239E918DD3F38 /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
-		ABCA969DBEA4B8383181C498 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
-		ABCA96A9C892590E12AC77A1 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
 		ABCA96AD913A1484D358DECC /* TyphoonRXMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TyphoonRXMLElement.h; sourceTree = "<group>"; };
 		ABCA96E250BFCC4110BC2762 /* TyphoonRXMLElement+XmlComponentFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TyphoonRXMLElement+XmlComponentFactory.h"; sourceTree = "<group>"; };
 		ABCA96FD736EC3E5DBA3DB83 /* TyphoonPassThroughTypeConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TyphoonPassThroughTypeConverter.h; sourceTree = "<group>"; };
@@ -167,7 +161,6 @@
 		ABCA9CF86C95A3C4E6E48A57 /* TyphoonPropertyInjectedByReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TyphoonPropertyInjectedByReference.h; sourceTree = "<group>"; };
 		ABCA9D0D6CCF5C06F65AE5BB /* NSString+SHA1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SHA1.h"; sourceTree = "<group>"; };
 		ABCA9D1A264CAE591EC283D7 /* TyphoonRXMLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TyphoonRXMLElement.m; sourceTree = "<group>"; };
-		ABCA9D339D7C5DC111AA7651 /* NSData+SRB64Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+SRB64Additions.h"; sourceTree = "<group>"; };
 		ABCA9D5D15B6BFFD648B4DD5 /* TyphoonComponentFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TyphoonComponentFactory.m; sourceTree = "<group>"; };
 		ABCA9DD99810A7CDE20A3234 /* TyphoonPropertyInjectedByType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TyphoonPropertyInjectedByType.m; sourceTree = "<group>"; };
 		ABCA9E20D1ACD91BF8D57FE5 /* PLGamePlayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLGamePlayViewController.h; sourceTree = "<group>"; };
@@ -176,7 +169,6 @@
 		ABCA9E9E2F496B53B6F831B0 /* TyphoonJRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TyphoonJRSwizzle.m; sourceTree = "<group>"; };
 		ABCA9EACA99A95CBE5965549 /* TyphoonIntrospectionUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TyphoonIntrospectionUtils.m; sourceTree = "<group>"; };
 		ABCA9EE899CA2AE495401A93 /* PLGameListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PLGameListCell.m; sourceTree = "<group>"; };
-		ABCA9F3B908CC47F3B8D8AAD /* SocketRocket-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SocketRocket-Prefix.pch"; sourceTree = "<group>"; };
 		ABCA9F99AF2ECF3084B36416 /* TyphoonDefinition+InstanceBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TyphoonDefinition+InstanceBuilder.m"; sourceTree = "<group>"; };
 		ABCA9FE4DB6FFFA3A5B18988 /* TyphoonAutowire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TyphoonAutowire.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -186,6 +178,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2AC405D917BA7DEE0084BE9B /* MultipeerConnectivity.framework in Frameworks */,
 				ABCA9ED6EAC5334CC757CC96 /* UIKit.framework in Frameworks */,
 				ABCA92F2B0BEFDD915AA707E /* Foundation.framework in Frameworks */,
 				ABCA99628DC6465913E294F7 /* CoreGraphics.framework in Frameworks */,
@@ -441,27 +434,12 @@
 			path = iPad;
 			sourceTree = "<group>";
 		};
-		ABCA9A2770460E00CF3C20BD /* SocketRocket */ = {
-			isa = PBXGroup;
-			children = (
-				ABCA969DBEA4B8383181C498 /* base64.c */,
-				ABCA96A9C892590E12AC77A1 /* base64.h */,
-				ABCA91427D0B6B1010B19BC9 /* SRWebSocket.h */,
-				ABCA968025C239E918DD3F38 /* SRWebSocket.m */,
-				ABCA9D339D7C5DC111AA7651 /* NSData+SRB64Additions.h */,
-				ABCA91685216E4FC8501CE58 /* NSData+SRB64Additions.m */,
-				ABCA9F3B908CC47F3B8D8AAD /* SocketRocket-Prefix.pch */,
-			);
-			path = SocketRocket;
-			sourceTree = "<group>";
-		};
 		ABCA9B2706D05874963FF94D /* Externals */ = {
 			isa = PBXGroup;
 			children = (
 				ABCA9BAD6CD2364A85ED3EF6 /* Typhoon */,
 				ABCA905C3E7B56E17CCD372C /* PLGeneralUtils */,
 				ABCA97D0FF6F40EF9901EB00 /* PLUIToolkit */,
-				ABCA9A2770460E00CF3C20BD /* SocketRocket */,
 				ABCA9971D4D85A945FE150DA /* NSString+SHA1 */,
 			);
 			path = Externals;
@@ -521,6 +499,7 @@
 		ABCA9DD6257F49DE57DE9A7B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2AC405D817BA7DEE0084BE9B /* MultipeerConnectivity.framework */,
 				ABCA9053A6FBC337ACF89424 /* UIKit.framework */,
 				ABCA9BD344E0EE9110A2F0C4 /* Foundation.framework */,
 				ABCA91C274C0468392854BD6 /* CoreGraphics.framework */,
@@ -607,6 +586,17 @@
 /* Begin PBXProject section */
 		ABCA9FA5A054A0135AD012FD /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				TargetAttributes = {
+					ABCA93733D09DC17ED6BFCF0 = {
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 0;
+							};
+						};
+					};
+				};
+			};
 			buildConfigurationList = ABCA9833C76339F7DA6C0781 /* Build configuration list for PBXProject "TicTacToe" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -682,9 +672,6 @@
 				ABCA9BBDA7454B7DC9D9E628 /* PLGraphicsUtils.m in Sources */,
 				ABCA9F4876D343DD8C5CBF6C /* PLGamePlayViewController.m in Sources */,
 				ABCA9CD5F8D70D0B20C0B4D4 /* PLGamePlayView.m in Sources */,
-				ABCA9D9FC0290EB3D56F5145 /* base64.c in Sources */,
-				ABCA976361A8DF9104D630B8 /* SRWebSocket.m in Sources */,
-				ABCA93A928A6C3B4D661A8D2 /* NSData+SRB64Additions.m in Sources */,
 				ABCA940D04EA41CD6B31B581 /* TicTacToeConstants.m in Sources */,
 				ABCA998C43FE5486E03DF311 /* PLGameChannel.m in Sources */,
 				ABCA9504A2B77562A2C73A36 /* NSString+SHA1.m in Sources */,
@@ -711,6 +698,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TicTacToe/TicTacToe-Prefix.pch";
 				INFOPLIST_FILE = "TicTacToe/TicTacToe-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
@@ -757,6 +745,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TicTacToe/TicTacToe-Prefix.pch";
 				INFOPLIST_FILE = "TicTacToe/TicTacToe-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;

@@ -3,22 +3,21 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRWebSocket.h"
 
 @class PLGameManager;
 @class PLGame;
+@class MCSession;
 
-@interface PLGameChannel : NSObject <SRWebSocketDelegate>
+@interface PLGameChannel : NSObject
 
-@property(nonatomic, assign, readonly) BOOL connected;
 @property(nonatomic, strong, readonly) PLGame *game;
 
-- (id)initWithGameManager:(PLGameManager *)manager;
+@property(nonatomic, strong, readonly) MCSession *session;
+
+@property (nonatomic, assign, readonly) BOOL isOwner;
+
 - (id)initWithGameManager:(PLGameManager *)manager game:(PLGame *)game;
 
-- (void)create;
-- (void)join;
-
-- (BOOL)move:(int)field;
+- (BOOL)move:(NSUInteger)field;
 
 @end

@@ -3,23 +3,24 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SRWebSocket.h"
 #import "PLGameChannel.h"
 
 @class PLGame;
 @class PLGameChannel;
+@class MCPeerID;
 
-@interface PLGameManager : NSObject <SRWebSocketDelegate>
+@interface PLGameManager : NSObject
+
++ (NSString *)serviceType;
 
 @property(nonatomic, strong, readonly) NSArray *waitingGames;
-@property(nonatomic, assign, readonly) BOOL connected;
-@property(nonatomic, strong, readonly) NSString *host;
 
-- (void)connect:(NSString *)host;
-- (void)reconnect;
+@property(nonatomic, strong, readonly) MCPeerID *peerId;
+-(MCPeerID *)peerForUserId:(NSString *)userId;
 
-- (PLGame *)gameWithId:(NSString *)gameId;
+-(PLGameChannel *) hostGame;
+-(void) teardownHostedGame;
 
-- (PLGameChannel *)createGameChannel;
-- (PLGameChannel *)joinGameChannel:(PLGame *)game;
+-(PLGameChannel *) joinGame:(PLGame *)game;
+
 @end
