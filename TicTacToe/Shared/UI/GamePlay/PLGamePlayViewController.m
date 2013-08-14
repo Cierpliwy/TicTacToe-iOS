@@ -96,7 +96,9 @@
 }
 
 - (void)gameplayView:(PLGamePlayView *)gameplayView didTapField:(NSUInteger)field {
-    [_gameChannel move:field];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [_gameChannel move:field];
+    });
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {

@@ -3,6 +3,7 @@
 //
 
 
+#import <libxml/SAX.h>
 #import "PLGame.h"
 
 @implementation PLGame {
@@ -46,22 +47,45 @@ int const PLGameFieldCount = 9;
 }
 
 - (void)performMove:(NSUInteger)field {
-    if(_state != PLGameStateRunning || _nextPlayer == PLGameFieldStateNone){
+    if (_state != PLGameStateRunning || _nextPlayer == PLGameFieldStateNone) {
         return;
     }
 
-    if([self fieldState:field] != PLGameFieldStateNone){
+    if ([self fieldState:field] != PLGameFieldStateNone) {
         return;
     }
 
     [_fields replaceObjectAtIndex:field withObject:@(_nextPlayer)];
     _nextPlayer = _nextPlayer != PLGameFieldStateO ? PLGameFieldStateO : PLGameFieldStateX;
 
-    //TODO: check win conditions
+    void (^check)(NSUInteger, NSUInteger, NSUInteger) = ^(NSUInteger a, NSUInteger b, NSUInteger c) {
+        PLGameFieldState reference = (PLGameFieldState) [_fields[a] integerValue];
+        BOOL same = reference == [_fields[b] integerValue] && reference == [_fields[c] integerValue];
+        if(same && reference != PLGameFieldStateNone){
+            _state = reference == PLGameFieldStateO ? PLGameStateWinO : PLGameStateWinX;
+        }
+    };
+
+    check(0, 1, 2); check(3, 4, 5); check(6, 7, 8);
+    check(0, 3, 6); check(1, 4, 7); check(2, 5, 8);
+    check(0, 4, 8); check(2, 4, 6);
+
+    if(_state == PLGameStateRunning){
+        NSUInteger occupiedFields = 0;
+        for(NSNumber * tmp in _fields){
+            if([tmp integerValue] != PLGameFieldStateNone){
+                ++occupiedFields;
+            }
+        }
+
+        if(occupiedFields == 9){
+            _state = PLGameStateDraw;
+        }
+    }
 }
 
 - (void)startWithChallengerId:(NSString *)challengerId {
-    if(_state!=PLGameStatePending){
+    if (_state != PLGameStatePending) {
         return;
     }
 

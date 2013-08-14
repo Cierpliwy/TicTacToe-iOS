@@ -101,7 +101,9 @@
                                                         discoveryInfo:nil
                                                           serviceType:[[self class] serviceType]];
         _advertiser.delegate = self;
-        [_advertiser startAdvertisingPeer];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [_advertiser startAdvertisingPeer];
+        });
     }
 
     return _hostedGame;
@@ -112,10 +114,12 @@
         return;
     }
 
-    [_advertiser stopAdvertisingPeer];
-    _advertiser = nil;
-    [_hostedGame.session disconnect];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [_advertiser stopAdvertisingPeer];
+        [_hostedGame.session disconnect];
+    });
 
+    _advertiser = nil;
     _hostedGame = nil;
 }
 
@@ -127,10 +131,12 @@
     PLGameChannel * gameChannel = [[PLGameChannel alloc] initWithGameManager:self
                                                                         game:game];
 
-    [_browser invitePeer:[self peerForUserId:game.ownerId]
-               toSession:gameChannel.session
-             withContext:nil
-                 timeout:10];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [_browser invitePeer:[self peerForUserId:game.ownerId]
+                   toSession:gameChannel.session
+                 withContext:nil
+                timeout:10];
+    });
 
     return gameChannel;
 }

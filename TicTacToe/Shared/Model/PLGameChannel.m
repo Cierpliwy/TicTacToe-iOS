@@ -28,8 +28,6 @@
 
         _session = [[MCSession alloc] initWithPeer:_manager.peerId];
         _session.delegate = self;
-
-        
     }
 
     return self;
