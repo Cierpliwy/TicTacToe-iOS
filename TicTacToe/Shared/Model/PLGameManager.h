@@ -19,7 +19,6 @@
 -(MCPeerID *)peerForUserId:(NSString *)userId;
 
 -(PLGameChannel *) hostGame;
--(void) teardownHostedGame;
 
 -(PLGameChannel *) joinGame:(PLGame *)game;
 

@@ -11,7 +11,6 @@
 
 @property(nonatomic, strong, readonly) PLGamePlayView *gameplayView;
 
-- (void)setupViewFromGameState;
 @end
 
 @implementation PLGamePlayViewController {
@@ -28,6 +27,9 @@
     if (_gameChannel != nil) {
         [_gameChannel removeObserver:self
                           forKeyPath:@"game"];
+
+        [_gameChannel removeObserver:self
+                          forKeyPath:@"isDisconnected"];
     }
 }
 
@@ -44,31 +46,58 @@
 }
 
 - (void)setupViewFromGameStateAnimated:(BOOL)animated {
-    if(!self.isViewLoaded){
+    if (!self.isViewLoaded) {
         return;
     }
 
-    for(int i = 0; i < [PLGame numberOfFields]; ++i){
+    for (int i = 0; i < [PLGame numberOfFields]; ++i) {
         PLGameFieldState state = [_gameChannel.game fieldState:i];
-        if(state == PLGameFieldStateO){
+        if (state == PLGameFieldStateO) {
             [[self.gameplayView.fields objectAtIndex:i] setTitle:@"O" forState:UIControlStateNormal];
-        } else if(state == PLGameFieldStateX){
+        } else if (state == PLGameFieldStateX) {
             [[self.gameplayView.fields objectAtIndex:i] setTitle:@"X" forState:UIControlStateNormal];
         } else {
             [[self.gameplayView.fields objectAtIndex:i] setTitle:@"" forState:UIControlStateNormal];
         }
     }
+    BOOL isDisconnected = _gameChannel.isDisconnected;
+
+    void (^setStatusText)(NSString *, UIColor *, UIColor *) = ^(NSString *text, UIColor *forColor, UIColor *backColor) {
+        [self.gameplayView setStateText:text
+                              textColor:forColor
+                        backgroungColor:backColor
+                               animated:animated];
+    };
+
     PLGameState state = _gameChannel.game.state;
-    if(state == PLGameStatePending){
-        [self.gameplayView setStateText:@"Pending" textColor:[UIColor whiteColor] backgroungColor:[UIColor redColor] animated:animated];
-    } else if(state == PLGameStateRunning){
-        [self.gameplayView setStateText:@"In progress" textColor:[UIColor whiteColor] backgroungColor:[UIColor orangeColor] animated:animated];
-    } else if(state == PLGameStateWinO){
-        [self.gameplayView setStateText:@"O - Wins" textColor:[UIColor blackColor] backgroungColor:[UIColor greenColor] animated:animated];
-    } else if(state == PLGameStateWinX){
-        [self.gameplayView setStateText:@"X - Wins" textColor:[UIColor blackColor] backgroungColor:[UIColor greenColor] animated:animated];
-    } else if(state == PLGameStateDraw){
-        [self.gameplayView setStateText:@"Draw" textColor:[UIColor whiteColor] backgroungColor:[UIColor blackColor] animated:animated];
+    if (state == PLGameStatePending) {
+        setStatusText(@"Pending", [UIColor whiteColor], [UIColor redColor]);
+    } else if (state == PLGameStateRunning) {
+        if (_gameChannel.game.nextPlayer == PLGameFieldStateO) {
+            setStatusText(_gameChannel.isOwner ? @"O(You) - Moves" : @"O - Moves", [UIColor whiteColor], [UIColor orangeColor]);
+        } else {
+            setStatusText(!_gameChannel.isOwner ? @"X(You) - Moves" : @"X - Moves", [UIColor whiteColor], [UIColor orangeColor]);
+        }
+    } else if (state == PLGameStateWinO) {
+        setStatusText(_gameChannel.isOwner ? @"O(You) - Wins" : @"O - Wins", [UIColor blackColor], [UIColor greenColor]);
+    } else if (state == PLGameStateWinX) {
+        setStatusText(!_gameChannel.isOwner ? @"X(You) - Wins" : @"X - Wins", [UIColor blackColor], [UIColor greenColor]);
+    } else if (state == PLGameStateDraw) {
+        setStatusText(@"Draw", [UIColor whiteColor], [UIColor blackColor]);
+    }
+
+    void (^setOpponentName)(NSString *, NSString *) = ^(NSString *playerSign, NSString *name) {
+        if (name == nil || name.length == 0) {
+            self.gameplayView.opponentNameLaber.text = @"Waiting for opponent";
+        } else {
+            self.gameplayView.opponentNameLaber.text = !isDisconnected ? [NSString stringWithFormat:@"Opponent: %@ - %@", playerSign, name] : [NSString stringWithFormat:@"Opponent: %@ - %@ (disconnected)", playerSign, name];
+        }
+    };
+
+    if (_gameChannel.isOwner) {
+        setOpponentName(@"X", _gameChannel.game.challengerId);
+    } else {
+        setOpponentName(@"O", _gameChannel.game.ownerId);
     }
 }
 
@@ -79,6 +108,8 @@
         if (_gameChannel != nil) {
             [_gameChannel removeObserver:self
                               forKeyPath:@"game"];
+            [_gameChannel removeObserver:self
+                              forKeyPath:@"isDisconnected"];
         }
 
         _gameChannel = gameChannel;
@@ -86,6 +117,10 @@
         if (_gameChannel != nil) {
             [_gameChannel addObserver:self
                            forKeyPath:@"game"
+                              options:NSKeyValueObservingOptionNew
+                              context:nil];
+            [_gameChannel addObserver:self
+                           forKeyPath:@"isDisconnected"
                               options:NSKeyValueObservingOptionNew
                               context:nil];
         }
@@ -104,6 +139,11 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([@"game" isEqualToString:keyPath]) {
         NSLog(@"game = %@", _gameChannel.game);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setupViewFromGameStateAnimated:YES];
+        });
+    } else if ([@"isDisconnected" isEqualToString:keyPath]) {
+        NSLog(@"isDisconnected = %d", _gameChannel.isDisconnected);
         dispatch_async(dispatch_get_main_queue(), ^{
             [self setupViewFromGameStateAnimated:YES];
         });

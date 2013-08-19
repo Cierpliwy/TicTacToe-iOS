@@ -9,6 +9,7 @@
 #import "PLGame.h"
 
 @interface PLGameChannel () <MCSessionDelegate>
+@property (nonatomic, assign, readwrite) BOOL isDisconnected;
 @end
 
 @implementation PLGameChannel {
@@ -18,9 +19,13 @@
 @synthesize game = _game;
 @synthesize isOwner = _isOwner;
 
+@synthesize isDisconnected = _isDisconnected;
+
 - (id)initWithGameManager:(PLGameManager *)manager game:(PLGame *)game {
     self = [super init];
     if (self) {
+        _isDisconnected = NO;
+
         _manager = manager;
         _game = game;
 
@@ -34,9 +39,18 @@
 }
 
 - (void)dealloc {
+    [self disconnect];
+}
+
+- (void)disconnect {
+    if(_isDisconnected){
+        return;
+    }
+
     if(_session.connectedPeers.count > 0){
         [_session disconnect];
     }
+    self.isDisconnected = YES;
 }
 
 - (BOOL)move:(NSUInteger)field {
@@ -85,11 +99,7 @@
 - (void)session:(MCSession *)session peer:(MCPeerID *)peerID didChangeState:(MCSessionState)state {
     NSLog(@"%s -> peer: %@ state: %d", sel_getName(_cmd), peerID, state);
 
-    if(![self isOwner]){
-        return;
-    }
-
-    if(state == MCSessionStateConnected){
+    if([self isOwner] && state == MCSessionStateConnected){
         if(_game.state == PLGameStatePending){
             [self willChangeValueForKey:@"game"];
             [_game startWithChallengerId:peerID.displayName];
@@ -97,8 +107,11 @@
         }
         [self broadcastGameState];
     }
-}
 
+    if(state == MCSessionStateNotConnected){
+        [self disconnect];
+    }
+}
 
 - (void)session:(MCSession *)session didReceiveData:(NSData *)data fromPeer:(MCPeerID *)peerID {
     NSLog(@"%s -> data: %@ peer: %@", sel_getName(_cmd), [[NSString alloc] initWithData:data encoding:kCFStringEncodingUTF8], peerID);
@@ -126,5 +139,7 @@
         [self didChangeValueForKey:@"game"];
     }
 }
+
+
 
 @end

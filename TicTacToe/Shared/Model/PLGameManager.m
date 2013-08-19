@@ -48,6 +48,12 @@
 
 - (void)dealloc {
     [_browser stopBrowsingForPeers];
+
+    if(_hostedGame){
+        [_hostedGame disconnect];
+        [_hostedGame removeObserver:self forKeyPath:@"isDisconnected"];
+    }
+
     if(_advertiser){
         [_advertiser stopAdvertisingPeer];
     }
@@ -104,23 +110,14 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [_advertiser startAdvertisingPeer];
         });
+
+        [_hostedGame addObserver:self
+                      forKeyPath:@"isDisconnected"
+                         options:NSKeyValueObservingOptionNew
+                         context:nil];
     }
 
     return _hostedGame;
-}
-
-- (void)teardownHostedGame {
-    if (_hostedGame == nil) {
-        return;
-    }
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [_advertiser stopAdvertisingPeer];
-        [_hostedGame.session disconnect];
-    });
-
-    _advertiser = nil;
-    _hostedGame = nil;
 }
 
 - (PLGameChannel *)joinGame:(PLGame *)game {
@@ -135,11 +132,31 @@
         [_browser invitePeer:[self peerForUserId:game.ownerId]
                    toSession:gameChannel.session
                  withContext:nil
-                timeout:10];
+                timeout:2];
     });
+
+    [self removeObjectFromWaitingGamesAtIndex:[_waitingGames indexOfObject:game]];
 
     return gameChannel;
 }
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if([keyPath isEqualToString:@"isDisconnected"]){
+        NSLog(@"hostedGames.isDisconnected: %@", change);
+        if(_hostedGame && _hostedGame.isDisconnected == YES){
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                [_advertiser stopAdvertisingPeer];
+            });
+
+            _advertiser = nil;
+            [_hostedGame removeObserver:self forKeyPath:@"isDisconnected"];
+            _hostedGame = nil;
+        }
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
 
 //***************************************************************
 #pragma mark -
@@ -164,7 +181,7 @@
 }
 
 - (void)browser:(MCNearbyServiceBrowser *)browser lostPeer:(MCPeerID *)peerID {
-    NSLog(@"%s -> peer: %@", sel_getName(_cmd), peerID);
+    
 
     for (NSUInteger i = 0; i < [self countOfWaitingGames]; ++i) {
         PLGame *tmp = [self objectInWaitingGamesAtIndex:i];

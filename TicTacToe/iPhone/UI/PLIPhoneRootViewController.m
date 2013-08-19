@@ -22,6 +22,7 @@
     self = [super init];
     if (self) {
         self.delegate = self;
+        self.navigationBar.translucent = NO;
 
         manager = aManager;
 
@@ -55,19 +56,10 @@
     playViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Leave"
                                                                                            style:UIBarButtonItemStyleBordered
                                                                                           target:self
-                                                                                          action:@selector(leaveHostedGameButtonPressed:)];
+                                                                                          action:@selector(leaveGameButtonPressed:)];
 
     [self pushViewController:playViewController
                     animated:YES];
-}
-
-- (void)leaveHostedGameButtonPressed:(id)leaveHostedGameButtonPressed {
-    if(![self.topViewController isKindOfClass:[PLGamePlayViewController class]]){
-        return;
-    }
-
-    [manager teardownHostedGame];
-    [self popViewControllerAnimated:YES];
 }
 
 - (void)gameListController:(PLGameListViewController *)listController didSelectGame:(PLGame *)game {
@@ -77,17 +69,19 @@
     playViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Leave"
                                                                                            style:UIBarButtonItemStyleBordered
                                                                                           target:self
-                                                                                          action:@selector(leaveJoinedGameButtonPressed:)];
+                                                                                          action:@selector(leaveGameButtonPressed:)];
 
     [self pushViewController:playViewController
                     animated:YES];
 }
 
-- (void)leaveJoinedGameButtonPressed:(id)leaveJoinedGameButtonPressed {
+- (void)leaveGameButtonPressed:(id)leaveHostedGameButtonPressed {
     if(![self.topViewController isKindOfClass:[PLGamePlayViewController class]]){
         return;
     }
 
+    PLGamePlayViewController * topController = (PLGamePlayViewController *) self.topViewController;
+    [topController.gameChannel disconnect];
     [self popViewControllerAnimated:YES];
 }
 

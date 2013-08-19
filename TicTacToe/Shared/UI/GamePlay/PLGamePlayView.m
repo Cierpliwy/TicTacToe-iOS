@@ -20,6 +20,7 @@
 @synthesize delegate = _delegate;
 @synthesize fields = _fields;
 @synthesize stateLabel = _stateLabel;
+@synthesize opponentNameLaber = _opponentNameLaber;
 
 CGFloat const kGamePlayFieldPadding = 10;
 
@@ -48,6 +49,13 @@ CGFloat const kGamePlayFieldPadding = 10;
                 [self createButtonForField:6],
                 [self createButtonForField:7],
                 [self createButtonForField:8]];
+
+        _opponentNameLaber = [[UILabel alloc] initWithFrame:CGRectZero];
+        _opponentNameLaber.font = [UIFont boldSystemFontOfSize:15];
+        _opponentNameLaber.textAlignment = UITextAlignmentCenter;
+        _opponentNameLaber.backgroundColor = [UIColor blueColor];
+        _opponentNameLaber.textColor = [UIColor whiteColor];
+        [self addSubview:_opponentNameLaber];
     }
 
     return self;
@@ -57,6 +65,7 @@ CGFloat const kGamePlayFieldPadding = 10;
     [super layoutSubviews];
 
     _stateLabel.frame = CGRectMake(0, 0, self.bounds.size.width, _stateLabel.font.lineHeight * 1.6f);
+    _opponentNameLaber.frame = CGRectMake(0, self.bounds.size.height - _opponentNameLaber.font.lineHeight * 1.6f, self.bounds.size.width, _opponentNameLaber.font.lineHeight * 1.6f);
 
     CGFloat dim = (fmin(self.bounds.size.width, self.bounds.size.height) - kGamePlayFieldPadding * 4) / 3;
     CGPoint fieldOrigin = CGPointMake(

@@ -16,6 +16,9 @@
 
 @property (nonatomic, assign, readonly) BOOL isOwner;
 
+@property (nonatomic, assign, readonly) BOOL isDisconnected;
+-(void) disconnect;
+
 - (id)initWithGameManager:(PLGameManager *)manager game:(PLGame *)game;
 
 - (BOOL)move:(NSUInteger)field;

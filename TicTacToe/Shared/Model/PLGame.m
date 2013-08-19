@@ -2,9 +2,14 @@
 // Created by Antoni Kędracki, Polidea
 //
 
-
-#import <libxml/SAX.h>
 #import "PLGame.h"
+
+@interface PLGame ()
+@property(nonatomic, assign, readwrite) PLGameState state;
+@property (nonatomic, strong, readwrite) NSString * ownerId;
+@property (nonatomic, strong, readwrite) NSString * challengerId;
+@property (nonatomic, assign, readwrite) PLGameFieldState nextPlayer;
+@end
 
 @implementation PLGame {
 
@@ -24,10 +29,10 @@ int const PLGameFieldCount = 9;
 - (id)initWithOwnerId:(NSString *)ownerId {
     self = [super init];
     if (self) {
-        _ownerId = ownerId;
-        _challengerId = nil;
-        _state = PLGameStatePending;
-        _nextPlayer = PLGameFieldStateNone;
+        self.ownerId = ownerId;
+        self.challengerId = nil;
+        self.state = PLGameStatePending;
+        self.nextPlayer = PLGameFieldStateNone;
         _fields = [NSMutableArray arrayWithCapacity:PLGameFieldCount];
         for (int i = 0; i < PLGameFieldCount; ++i) {
             [_fields addObject:@(PLGameFieldStateNone)];
@@ -56,13 +61,13 @@ int const PLGameFieldCount = 9;
     }
 
     [_fields replaceObjectAtIndex:field withObject:@(_nextPlayer)];
-    _nextPlayer = _nextPlayer != PLGameFieldStateO ? PLGameFieldStateO : PLGameFieldStateX;
+    self.nextPlayer = _nextPlayer != PLGameFieldStateO ? PLGameFieldStateO : PLGameFieldStateX;
 
     void (^check)(NSUInteger, NSUInteger, NSUInteger) = ^(NSUInteger a, NSUInteger b, NSUInteger c) {
         PLGameFieldState reference = (PLGameFieldState) [_fields[a] integerValue];
         BOOL same = reference == [_fields[b] integerValue] && reference == [_fields[c] integerValue];
         if(same && reference != PLGameFieldStateNone){
-            _state = reference == PLGameFieldStateO ? PLGameStateWinO : PLGameStateWinX;
+            self.state = reference == PLGameFieldStateO ? PLGameStateWinO : PLGameStateWinX;
         }
     };
 
@@ -79,7 +84,7 @@ int const PLGameFieldCount = 9;
         }
 
         if(occupiedFields == 9){
-            _state = PLGameStateDraw;
+            self.state = PLGameStateDraw;
         }
     }
 }
@@ -89,9 +94,9 @@ int const PLGameFieldCount = 9;
         return;
     }
 
-    _challengerId = challengerId;
-    _state = PLGameStateRunning;
-    _nextPlayer = PLGameFieldStateO;
+    self.challengerId = challengerId;
+    self.nextPlayer = PLGameFieldStateO;
+    self.state = PLGameStateRunning;
 }
 
 + (int)numberOfFields {
@@ -99,10 +104,7 @@ int const PLGameFieldCount = 9;
 }
 
 - (void)loadFromDict:(NSDictionary *)dict {
-    _state = (PLGameState) [[dict objectForKey:@"state"] integerValue];
-    _ownerId = [dict objectForKey:@"ownerId"];
-    _challengerId = [dict objectForKey:@"challengerId"];
-    _nextPlayer = (PLGameFieldState) [[dict objectForKey:@"nextPlayer"] integerValue];
+    //reversed parsing order, so that KVO notifications have more sense
     id fields = [dict objectForKey:@"fields"];
     if (fields != nil) {
         if ([fields count] != [_fields count]) {
@@ -113,6 +115,10 @@ int const PLGameFieldCount = 9;
         [_fields removeAllObjects];
         [_fields addObjectsFromArray:fields];
     }
+    self.ownerId = [dict objectForKey:@"ownerId"];
+    self.challengerId = [dict objectForKey:@"challengerId"];
+    self.nextPlayer = (PLGameFieldState) [[dict objectForKey:@"nextPlayer"] integerValue];
+    self.state = (PLGameState) [[dict objectForKey:@"state"] integerValue];
 }
 
 - (NSDictionary *)storeToDict {
@@ -131,6 +137,5 @@ int const PLGameFieldCount = 9;
     [description appendString:@">"];
     return description;
 }
-
 
 @end

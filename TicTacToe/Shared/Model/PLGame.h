@@ -11,8 +11,7 @@ typedef enum {
     PLGameStateRunning = 1,
     PLGameStateWinO = 2,
     PLGameStateWinX = 3,
-    PLGameStateDraw = 4
-
+    PLGameStateDraw = 4,
 } PLGameState;
 
 typedef enum {

@@ -18,6 +18,7 @@
 
 @property(nonatomic, strong, readonly) UILabel *stateLabel;
 @property(nonatomic, strong, readonly) NSArray *fields;
+@property(nonatomic, strong, readonly) UILabel *opponentNameLaber;
 
 -(void) setStateText:(NSString*)text textColor:(UIColor *)textColor backgroungColor:(UIColor *)bgColor animated:(BOOL)animated;
 
