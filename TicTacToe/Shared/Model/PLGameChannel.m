@@ -89,8 +89,8 @@
         return false;
     }
     if (_connected == NO) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Not connected to a server" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-        [alertView show];
+
+        [_delegate gameChannelNotConnected:self];
         return false;
     }
     

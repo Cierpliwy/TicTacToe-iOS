@@ -98,11 +98,13 @@
 
 - (PLGameChannel *)createGameChannel {
     PLGameChannel *channel = [[PLGameChannel alloc] initWithGameManager:self];
+    channel.delegate = self;
     return channel;
 }
 
 - (PLGameChannel *)joinGameChannel:(PLGame *)game {
     PLGameChannel *channel = [[PLGameChannel alloc] initWithGameManager:self game:game];
+    channel.delegate = self;
     return channel;
 }
 
@@ -188,6 +190,16 @@
             }
         }
     }
+}
+
+//***************************************************************
+#pragma mark -
+#pragma mark game channel delegate
+//***************************************************************
+
+- (void)gameChannelNotConnected:(PLGameChannel *)gameChannel {
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Not connected to a server" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [alertView show];
 }
 
 @end

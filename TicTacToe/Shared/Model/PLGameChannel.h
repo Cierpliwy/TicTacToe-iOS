@@ -7,9 +7,17 @@
 
 @class PLGameManager;
 @class PLGame;
+@class PLGameChannel;
+
+@protocol PLGameChannelDelegate <NSObject>
+
+- (void)gameChannelNotConnected:(PLGameChannel *)gameChannel;
+
+@end
 
 @interface PLGameChannel : NSObject <SRWebSocketDelegate>
 
+@property(nonatomic, weak) id <PLGameChannelDelegate> delegate;
 @property(nonatomic, assign, readonly) BOOL connected;
 @property(nonatomic, strong, readonly) PLGame *game;
 

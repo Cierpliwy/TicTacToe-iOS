@@ -9,7 +9,7 @@
 @class PLGame;
 @class PLGameChannel;
 
-@interface PLGameManager : NSObject <SRWebSocketDelegate>
+@interface PLGameManager : NSObject <SRWebSocketDelegate, PLGameChannelDelegate>
 
 @property(nonatomic, strong, readonly) NSArray *waitingGames;
 @property(nonatomic, assign, readonly) BOOL connected;
