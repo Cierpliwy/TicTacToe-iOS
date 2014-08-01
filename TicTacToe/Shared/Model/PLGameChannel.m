@@ -88,7 +88,12 @@
     if(_ws == nil){
         return false;
     }
-
+    if (_connected == NO) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Not connected to a server" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alertView show];
+        return false;
+    }
+    
     id msg = @{@"move" : @(field)};
     id msgData = [NSJSONSerialization dataWithJSONObject:msg
                                                  options:0
